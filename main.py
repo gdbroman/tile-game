@@ -12,32 +12,39 @@ clock = pygame.time.Clock()
 
 
 class Tile(object):
-    stone = False
     w = 30
     h = 30
 
     grass_img = pygame.image.load('Images/Tiles/grass.png')
-    stone_img = pygame.image.load('Images/stone.png').convert_alpha()
+    stone_img = pygame.image.load('Images/stone.png')
+    tree_img = pygame.image.load('Images/tree.png')
 
     def __init__(self, x_n, y_n, off_x, off_y):
         self.x_n = x_n
         self.y_n = y_n
         self.x = x_n * self.w + off_x
         self.y = y_n * self.h + off_y
+        self.objects = {"stone":False, "tree":False}
 
     def draw(self):
         if self.x < screenWidth and (self.x + self.w) > 0 and self.y < screenHeight and (self.y + self.h) > 0:
             win.blit(self.grass_img, (self.x, self.y))
             #pygame.draw.rect(win, (255, 255, 255), (self.x, self.y, self.w, self.h), 1)
-            if self.stone:
-                win.blit(self.stone_img, (self.x, self.y))
+
+    def draw_object(self):
+        img = self.stone_img
+        if self.objects["stone"]:
+            pass
+        elif self.objects["tree"]:
+            img = self.tree_img
+        else:
+            return
+        win.blit(img, (self.x - img.get_size()[0] + 30, self.y- int(img.get_size()[1]) + 30))
 
     def move(self, off_x, off_y):
         self.x += off_x
         self.y += off_y
 
-    def place_object(self):
-        self.stone = True
 
 
 class World(object):
@@ -54,13 +61,17 @@ class World(object):
                 self.tiles.append(t)
         for t in self.tiles:
             p = random.randint(1, 100)
-            print(p)
             if p < 5:
-                t.place_object()
+                t.objects["stone"] = True
+            elif p < 8:
+                t.objects["tree"] = True
+
 
     def draw(self):
         for t in self.tiles:
             t.draw()
+        for t in self.tiles:
+            t.draw_object()
 
     def move(self, dx, dy):
         self.x += dx
@@ -72,6 +83,7 @@ class World(object):
 def redraw_game_window(the_world):
     win.fill((0, 0, 0))
     the_world.draw()
+    pygame.display.flip()
     pygame.display.update()
 
 
