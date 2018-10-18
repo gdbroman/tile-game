@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 pygame.init()
 
@@ -58,24 +59,29 @@ class World(object):
     tiles = []
 
     def __init__(self):
+        forests = random.randint(5, 10)
         for n in range(self.n_tiles_x):
             for m in range(self.n_tiles_y):
                 t = Tile(n, m, self.x, self.y)
                 self.tiles.append(t)
                 sp = random.randint(1, 100)
-                tp = random.randint(1, 100)
-                if self.tiles[m - 1].objects["stone"]:
-                    sp += 3
-                    if len(self.tiles) > self.n_tiles_x and self.tiles[m-self.n_tiles_x].objects["stone"]:
-                        sp += 3
-                if self.tiles[m - 1].objects["tree"]:
-                    tp += 20
-                    if len(self.tiles) > self.n_tiles_x and self.tiles[m-self.n_tiles_x].objects["tree"]:
-                        sp += 20
                 if sp > 98:
                     t.objects["stone"] = True
-                elif tp > 98:
-                    t.objects["tree"] = True
+
+        for f in range(forests):
+            trees = random.randint(20, 30)
+            tile_n = random.randint(0, len(self.tiles))
+            print(tile_n)
+            width = height = int(math.sqrt(trees))
+            if tile_n + width > len(self.tiles):
+                tile_n -= width
+            if tile_n + width * self.n_tiles_x > len(self.tiles):
+                tile_n -= width * self.n_tiles_x
+            for x in range(width):
+                for y in range(height):
+                    p = random.randint(0, 10)
+                    if p > 8:
+                        self.tiles[tile_n+width+width*height].objects["tree"] = True
 
     def draw(self):
         for t in self.tiles:
@@ -88,6 +94,9 @@ class World(object):
         self.y += dy
         for t in self.tiles:
             t.move(dx, dy)
+
+    def zoom(self, scroll_y):
+        print(scroll_y)
 
 
 def redraw_game_window(the_world):
@@ -125,6 +134,11 @@ def game_loop(the_world):
             the_world.move(0, 5)
         elif keys[pygame.K_d]:
             the_world.move(5, 0)
+        scroll_y = 0
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 4: scroll_y = min(scroll_y + 15, 0)
+            if event.button == 5: scroll_y = max(scroll_y - 15, -300)
+            the_world.zoom(scroll_y)
 
         redraw_game_window(the_world)
 
