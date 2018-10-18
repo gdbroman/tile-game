@@ -24,12 +24,13 @@ class Tile(object):
         self.y_n = y_n
         self.x = x_n * self.w + off_x
         self.y = y_n * self.h + off_y
+        self.type = "grass"
         self.objects = {"stone":False, "tree":False}
 
     def draw(self):
         if self.x < screenWidth and (self.x + self.w) > 0 and self.y < screenHeight and (self.y + self.h) > 0:
-            win.blit(self.grass_img, (self.x, self.y))
-            #pygame.draw.rect(win, (255, 255, 255), (self.x, self.y, self.w, self.h), 1)
+            if self.type == "grass":
+                win.blit(self.grass_img, (self.x, self.y))
 
     def draw_object(self):
         img = self.stone_img
@@ -45,13 +46,15 @@ class Tile(object):
         self.x += off_x
         self.y += off_y
 
+    def set_type(self, type):
+        self.type = type
 
 
 class World(object):
-    x = 200
-    y = 200
-    n_tiles_x = 20
-    n_tiles_y = 15
+    n_tiles_x = 100
+    n_tiles_y = 80
+    x = n_tiles_x/2*-30
+    y = n_tiles_y/2*-30
     tiles = []
 
     def __init__(self):
@@ -59,13 +62,20 @@ class World(object):
             for m in range(self.n_tiles_y):
                 t = Tile(n, m, self.x, self.y)
                 self.tiles.append(t)
-        for t in self.tiles:
-            p = random.randint(1, 100)
-            if p < 5:
-                t.objects["stone"] = True
-            elif p < 8:
-                t.objects["tree"] = True
-
+                sp = random.randint(1, 100)
+                tp = random.randint(1, 100)
+                if self.tiles[m - 1].objects["stone"]:
+                    sp += 3
+                    if len(self.tiles) > self.n_tiles_x and self.tiles[m-self.n_tiles_x].objects["stone"]:
+                        sp += 3
+                if self.tiles[m - 1].objects["tree"]:
+                    tp += 20
+                    if len(self.tiles) > self.n_tiles_x and self.tiles[m-self.n_tiles_x].objects["tree"]:
+                        sp += 20
+                if sp > 98:
+                    t.objects["stone"] = True
+                elif tp > 98:
+                    t.objects["tree"] = True
 
     def draw(self):
         for t in self.tiles:
