@@ -16,7 +16,7 @@ class Tile(object):
     w = 30
     h = 30
 
-    grass_img = pygame.image.load('images/Tiles/grass.png')
+    grass_img = pygame.image.load('images/tiles/grass.png')
     stone_img = pygame.image.load('images/stone.png')
     tree_img = pygame.image.load('images/tree.png')
 
