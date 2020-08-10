@@ -16,9 +16,9 @@ class Tile(object):
     w = 30
     h = 30
 
-    grass_img = pygame.image.load('Images/Tiles/grass.png')
-    stone_img = pygame.image.load('Images/stone.png')
-    tree_img = pygame.image.load('Images/tree.png')
+    grass_img = pygame.image.load('images/Tiles/grass.png')
+    stone_img = pygame.image.load('images/stone.png')
+    tree_img = pygame.image.load('images/tree.png')
 
     def __init__(self, x_n, y_n, off_x, off_y):
         self.x_n = x_n
